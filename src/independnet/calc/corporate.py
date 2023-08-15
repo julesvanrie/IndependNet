@@ -4,9 +4,12 @@ company
 Functions
 ---------
     income_tax
+    withholding_tax
+    profit_after_tax
+    net_dividend
 """
-# import numpy as np
 import numpy.typing as npt
+from independnet.utils import make_non_negative
 from independnet.calc.params import (
     CORPORATE_TAX_RATE,
     REDUCED_CORPORATE_TAX_RATE,
@@ -38,11 +41,7 @@ def income_tax(net_profit: npt.ArrayLike,
     tax_rate = (eligible_reduced * REDUCED_CORPORATE_TAX_RATE
                 + (1 - eligible_reduced) * CORPORATE_TAX_RATE)
     tax = tax_rate * net_profit
-    # Ensure tax is not negative
-    if isinstance(tax, (int, float)):
-        tax = max(tax, 0)
-    else:
-        tax[tax<0] = 0
+    tax = make_non_negative(tax)
     return tax
 
 
@@ -62,14 +61,10 @@ def withholding_tax(net_profit: npt.ArrayLike,
     npt.ArrayLike
         The dividend withholding tax to be paid
     """
-    tax_rate = (eligible_reduced * REDUCED_WHT_DIVIDEND
-                + (1 - eligible_reduced) * WHT_DIVIDEND)
+    tax_rate = (eligible_reduced * REDUCED_WHT_DIVIDEND  # type: ignore
+                + (1 - eligible_reduced) * WHT_DIVIDEND) # type: ignore
     tax = tax_rate * net_profit
-    # Ensure tax is not negative
-    if isinstance(tax, (int, float)):
-        tax = max(tax, 0)
-    else:
-        tax[tax<0] = 0
+    tax = make_non_negative(tax)
     return tax
 
 
@@ -128,9 +123,5 @@ def net_dividend(net_profit: npt.ArrayLike,
                                   highest_remuneration=highest_remuneration)
     wht = withholding_tax(net_profit=before_wht,
                           eligible_reduced=reduced_wht)
-    # Ensure before_wht is not negative
-    if isinstance(before_wht, (int, float)):
-        before_wht = max(before_wht, 0)
-    else:
-        before_wht[before_wht<0] = 0
+    before_wht = make_non_negative(before_wht)
     return before_wht - wht # type: ignore
