@@ -97,3 +97,40 @@ def profit_after_tax(net_profit: npt.ArrayLike,
                      small_company=small_company,
                      highest_remuneration=highest_remuneration)
     return net_profit - tax # type: ignore
+
+
+def net_dividend(net_profit: npt.ArrayLike,
+                 small_company: npt.ArrayLike = False,
+                 highest_remuneration: npt.ArrayLike = 0,
+                 reduced_wht: npt.ArrayLike = False) -> npt.ArrayLike:
+    """Calculates the net dividend after corporate income tax and after
+    withholding tax
+
+    Parameters
+    ----------
+    net_profit : npt.ArrayLike
+        The net profit of the company after deducting remuneration of directors
+    small_company : npt.ArrayLike, default: False
+        Whether the company is a small company as required to benefit from
+        the reduced tax rate
+    highest_remuneration : npt.ArrayLike, default: 0
+        The highest remuneration paid out to one of the directores
+    reduced_wht : npt.ArrayLike, default: False
+        Whether the company can benefit from the reduced withholding tax rate
+
+    Returns
+    -------
+    npt.ArrayLike
+        The net dividend after corporate income tax and after withholding tax
+    """
+    before_wht = profit_after_tax(net_profit=net_profit,
+                                  small_company=small_company,
+                                  highest_remuneration=highest_remuneration)
+    wht = withholding_tax(net_profit=before_wht,
+                          eligible_reduced=reduced_wht)
+    # Ensure before_wht is not negative
+    if isinstance(before_wht, (int, float)):
+        before_wht = max(before_wht, 0)
+    else:
+        before_wht[before_wht<0] = 0
+    return before_wht - wht # type: ignore
