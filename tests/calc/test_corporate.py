@@ -78,7 +78,7 @@ class TestWithholdingTax:
 
     def test_number_reduced(self):
         net_profit = 10_000
-        tax_calculated = withholding_tax(net_profit, eligible_reduced=True)
+        tax_calculated = withholding_tax(net_profit, eligible_reduced_wht=True)
         tax_expected = net_profit * REDUCED_WHT_DIVIDEND
         assert tax_calculated == tax_expected
 
@@ -105,7 +105,7 @@ class TestWithholdingTax:
         tax_expected = np.array([10_000 * WHT_DIVIDEND,
                                  10_000 * REDUCED_WHT_DIVIDEND,
                                  0])
-        tax_calculated = withholding_tax(net_profit, eligible_reduced=reduced)
+        tax_calculated = withholding_tax(net_profit, eligible_reduced_wht=reduced)
         assert np.allclose(tax_calculated, tax_expected)
 
 
@@ -152,7 +152,7 @@ class TestNetDividend:
         calculated = net_dividend(net_profit,
                                   small_company=True,
                                   highest_remuneration=remuneration,
-                                  reduced_wht=True)
+                                  eligible_reduced_wht=True)
         expected = net_profit * (1 - REDUCED_CORPORATE_TAX_RATE) \
                               * (1 - REDUCED_WHT_DIVIDEND)
         assert calculated == expected
@@ -170,5 +170,5 @@ class TestNetDividend:
         calculated = net_dividend(net_profit,
                                   small_company=small_company,
                                   highest_remuneration=remuneration,
-                                  reduced_wht=reduced_wht)
+                                  eligible_reduced_wht=reduced_wht)
         assert np.allclose(calculated, expected)

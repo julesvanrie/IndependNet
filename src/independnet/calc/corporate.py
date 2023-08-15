@@ -46,14 +46,14 @@ def income_tax(net_profit: npt.ArrayLike,
 
 
 def withholding_tax(net_profit: npt.ArrayLike,
-                    eligible_reduced: npt.ArrayLike = False) -> npt.ArrayLike:
+                    eligible_reduced_wht: npt.ArrayLike = False) -> npt.ArrayLike:
     """Calculates the dividend withholding tax
 
     Parameters
     ----------
     net_profit : npt.ArrayLike
         The net profit of the company after deducting remuneration of directors
-    eligible_reduced : npt.ArrayLike, default: False
+    eligible_reduced_wht : npt.ArrayLike, default: False
         Whether the company can benefit from the reduced withholding tax rate
 
     Returns
@@ -61,8 +61,8 @@ def withholding_tax(net_profit: npt.ArrayLike,
     npt.ArrayLike
         The dividend withholding tax to be paid
     """
-    tax_rate = (eligible_reduced * REDUCED_WHT_DIVIDEND  # type: ignore
-                + (1 - eligible_reduced) * WHT_DIVIDEND) # type: ignore
+    tax_rate = (eligible_reduced_wht * REDUCED_WHT_DIVIDEND  # type: ignore
+                + (1 - eligible_reduced_wht) * WHT_DIVIDEND) # type: ignore
     tax = tax_rate * net_profit
     tax = make_non_negative(tax)
     return tax
@@ -97,7 +97,7 @@ def profit_after_tax(net_profit: npt.ArrayLike,
 def net_dividend(net_profit: npt.ArrayLike,
                  small_company: npt.ArrayLike = False,
                  highest_remuneration: npt.ArrayLike = 0,
-                 reduced_wht: npt.ArrayLike = False) -> npt.ArrayLike:
+                 eligible_reduced_wht: npt.ArrayLike = False) -> npt.ArrayLike:
     """Calculates the net dividend after corporate income tax and after
     withholding tax
 
@@ -110,7 +110,7 @@ def net_dividend(net_profit: npt.ArrayLike,
         the reduced tax rate
     highest_remuneration : npt.ArrayLike, default: 0
         The highest remuneration paid out to one of the directores
-    reduced_wht : npt.ArrayLike, default: False
+    eligible_reduced_wht : npt.ArrayLike, default: False
         Whether the company can benefit from the reduced withholding tax rate
 
     Returns
@@ -122,6 +122,6 @@ def net_dividend(net_profit: npt.ArrayLike,
                                   small_company=small_company,
                                   highest_remuneration=highest_remuneration)
     wht = withholding_tax(net_profit=before_wht,
-                          eligible_reduced=reduced_wht)
+                          eligible_reduced_wht=eligible_reduced_wht)
     before_wht = make_non_negative(before_wht)
     return before_wht - wht # type: ignore
