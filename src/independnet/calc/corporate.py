@@ -71,3 +71,29 @@ def withholding_tax(net_profit: npt.ArrayLike,
     else:
         tax[tax<0] = 0
     return tax
+
+
+def profit_after_tax(net_profit: npt.ArrayLike,
+                     small_company: npt.ArrayLike = False,
+                     highest_remuneration: npt.ArrayLike = 0) -> npt.ArrayLike:
+    """Calculates the profit after corporate income tax
+
+    Parameters
+    ----------
+    net_profit : npt.ArrayLike
+        The net profit of the company after deducting remuneration of directors
+    small_company : npt.ArrayLike, default: False
+        Whether the company is a small company as required to benefit from
+        the reduced tax rate
+    highest_remuneration : npt.ArrayLike, default: 0
+        The highest remuneration paid out to one of the directores
+
+    Returns
+    -------
+    npt.ArrayLike
+        The profit after corporate income tax
+    """
+    tax = income_tax(net_profit=net_profit,
+                     small_company=small_company,
+                     highest_remuneration=highest_remuneration)
+    return net_profit - tax # type: ignore
