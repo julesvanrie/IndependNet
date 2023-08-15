@@ -12,6 +12,6 @@ class TestMakeNonNegative:
         assert make_non_negative(-5.0) == 0
 
     def test_array(self):
-        input = np.array([5, 5.0, -5, -5.0])
-        output = np.array([5, 5.0, 0, 0])
-        assert np.allclose(make_non_negative(input), output)
+        inp = np.array([5, 5.0, -5, -5.0])
+        outp = np.array([5, 5.0, 0, 0])
+        assert np.allclose(make_non_negative(inp), outp)
