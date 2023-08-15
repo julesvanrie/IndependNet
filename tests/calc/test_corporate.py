@@ -100,3 +100,33 @@ class TestWithholdingTax:
                                  0])
         tax_calculated = withholding_tax(net_profit, eligible_reduced=reduced)
         assert np.allclose(tax_calculated, tax_expected)
+
+
+class TestProfitAfterTax:
+    def test_number(self):
+        net_profit = 10_000
+        calculated = profit_after_tax(net_profit)
+        expected = net_profit * (1 - CORPORATE_TAX_RATE)
+        assert calculated == expected
+
+    def test_number_reduced(self):
+        net_profit = 10_000
+        remuneration = 11_000
+        calculated = profit_after_tax(net_profit,
+                                      small_company=True,
+                                      highest_remuneration=remuneration)
+        expected = net_profit * (1 - REDUCED_CORPORATE_TAX_RATE)
+        assert calculated == expected
+
+    def test_array(self):
+        net_profit = np.array([10_000, 10_000, 10_000, -10_000])
+        small_company = np.array([False, True, True])
+        remuneration = np.array([11_000, 9_000, 11_000, 5_000])
+        expected = np.array([10_000 * CORPORATE_TAX_RATE,
+                                 10_000 * CORPORATE_TAX_RATE,
+                                 10_000 * REDUCED_CORPORATE_TAX_RATE,
+                                 0])
+        calculated = profit_after_tax(net_profit,
+                                      small_company=small_company,
+                                      highest_remuneration=remuneration)
+        assert np.allclose(calculated, expected)
