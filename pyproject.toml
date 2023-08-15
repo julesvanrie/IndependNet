@@ -24,7 +24,19 @@ tests = [
   'pytest',
   'pylint',
 ]
+dev = [
+  'ipython',
+  'notebook',
+  'ipdb'
+]
 
 [project.urls]
 "Homepage" = "https://github.com/julesvanrie/IndependNet"
 "Bug Tracker" = "https://github.com/julesvanrie/IndependNet/issues"
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/__pycache__",
+  "tests"
+]
+typeCheckingMode = "basic"
