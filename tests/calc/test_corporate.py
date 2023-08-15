@@ -7,7 +7,8 @@ from independnet.calc.params import (
 from independnet.calc.corporate import (
     income_tax,
     withholding_tax,
-    profit_after_tax
+    profit_after_tax,
+    net_dividend
 )
 import numpy as np
 
@@ -135,4 +136,39 @@ class TestProfitAfterTax:
         calculated = profit_after_tax(net_profit,
                                       small_company=small_company,
                                       highest_remuneration=remuneration)
+        assert np.allclose(calculated, expected)
+
+
+class TestNetDividend:
+    def test_number(self):
+        net_profit = 10_000
+        calculated = net_dividend(net_profit)
+        expected = net_profit * (1 - CORPORATE_TAX_RATE) * (1 - WHT_DIVIDEND)
+        assert calculated == expected
+
+    def test_number_reduced(self):
+        net_profit = 10_000
+        remuneration = 11_000
+        calculated = net_dividend(net_profit,
+                                  small_company=True,
+                                  highest_remuneration=remuneration,
+                                  reduced_wht=True)
+        expected = net_profit * (1 - REDUCED_CORPORATE_TAX_RATE) \
+                              * (1 - REDUCED_WHT_DIVIDEND)
+        assert calculated == expected
+
+    def test_array(self):
+        net_profit = np.array([10_000, 10_000, 10_000, -10_000])
+        small_company = np.array([False, True, True, True])
+        remuneration = np.array([11_000, 9_000, 11_000, 5_000])
+        reduced_wht = np.array([False, True, False, True])
+        expected = np.array([
+            10_000 * (1 - CORPORATE_TAX_RATE) * (1 - WHT_DIVIDEND),
+            10_000 * (1 - CORPORATE_TAX_RATE) * (1 - REDUCED_WHT_DIVIDEND),
+            10_000 * (1 - REDUCED_CORPORATE_TAX_RATE) * (1 - WHT_DIVIDEND),
+            0])
+        calculated = net_dividend(net_profit,
+                                  small_company=small_company,
+                                  highest_remuneration=remuneration,
+                                  reduced_wht=reduced_wht)
         assert np.allclose(calculated, expected)
