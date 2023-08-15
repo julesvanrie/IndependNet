@@ -4,7 +4,11 @@ from independnet.calc.params import (
     WHT_DIVIDEND,
     REDUCED_WHT_DIVIDEND
 )
-from independnet.calc.corporate import income_tax, withholding_tax
+from independnet.calc.corporate import (
+    income_tax,
+    withholding_tax,
+    profit_after_tax
+)
 import numpy as np
 
 class TestIncomeTax:
@@ -120,12 +124,12 @@ class TestProfitAfterTax:
 
     def test_array(self):
         net_profit = np.array([10_000, 10_000, 10_000, -10_000])
-        small_company = np.array([False, True, True])
+        small_company = np.array([False, True, True, True])
         remuneration = np.array([11_000, 9_000, 11_000, 5_000])
-        expected = np.array([10_000 * CORPORATE_TAX_RATE,
-                                 10_000 * CORPORATE_TAX_RATE,
-                                 10_000 * REDUCED_CORPORATE_TAX_RATE,
-                                 0])
+        expected = np.array([10_000 * (1 - CORPORATE_TAX_RATE),
+                             10_000 * (1 - CORPORATE_TAX_RATE),
+                             10_000 * (1 - REDUCED_CORPORATE_TAX_RATE),
+                             -10_000])
         calculated = profit_after_tax(net_profit,
                                       small_company=small_company,
                                       highest_remuneration=remuneration)
