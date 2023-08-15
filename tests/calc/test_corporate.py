@@ -15,12 +15,12 @@ class TestIncomeTax:
     def test_number(self):
         net_profit = 20_000
         tax_calculated = income_tax(net_profit)
-        tax_expected = net_profit * .25
+        tax_expected = net_profit * CORPORATE_TAX_RATE
         assert tax_calculated == tax_expected
 
     def test_number_small(self):
         net_profit = 20_000
-        tax_expected = net_profit * .25
+        tax_expected = net_profit * CORPORATE_TAX_RATE
         tax_calculated = income_tax(net_profit,
                                     small_company=True)
         assert tax_calculated == tax_expected
@@ -28,7 +28,7 @@ class TestIncomeTax:
     def test_number_small_with_sufficient_remuneration(self):
         net_profit = 20_000
         remuneration = 30_000
-        tax_expected = net_profit * .20
+        tax_expected = net_profit * REDUCED_CORPORATE_TAX_RATE
         tax_calculated = income_tax(net_profit,
                                     small_company=True,
                                     highest_remuneration=remuneration)
@@ -37,7 +37,7 @@ class TestIncomeTax:
     def test_number_small_with_insufficient_remuneration(self):
         net_profit = 20_000
         remuneration = 15_000
-        tax_expected = net_profit * .25
+        tax_expected = net_profit * CORPORATE_TAX_RATE
         tax_calculated = income_tax(net_profit,
                                     small_company=True,
                                     highest_remuneration=remuneration)
@@ -50,7 +50,9 @@ class TestIncomeTax:
 
     def test_array(self):
         net_profit = np.array([10_000, 10_000, -10_000])
-        tax_expected = np.array([2_500, 2_500, 0])
+        tax_expected = np.array([10_000 * CORPORATE_TAX_RATE,
+                                 10_000 * CORPORATE_TAX_RATE,
+                                 0])
         tax_calculated = income_tax(net_profit)
         assert np.allclose(tax_calculated, tax_expected)
 
