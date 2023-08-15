@@ -34,6 +34,11 @@ dev = [
 "Homepage" = "https://github.com/julesvanrie/IndependNet"
 "Bug Tracker" = "https://github.com/julesvanrie/IndependNet/issues"
 
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+
 [tool.pyright]
 include = ["src"]
 exclude = ["**/__pycache__",
